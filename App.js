@@ -7,6 +7,8 @@ import Diary from './screens/Diary/Diary';
 import Profile from './screens/Profile/Profile';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import DrawerContent from './components/DrawerContent';
+import { useFonts } from 'expo-font';
 
 const Drawer = createDrawerNavigator()
 const Tabs = createBottomTabNavigator()
@@ -41,7 +43,7 @@ function DiaryLayout() {
 
 function SectionDrawers() {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props}/>}>
       <Drawer.Screen name='Dashboard' component={DashboardLayout}/>
       <Drawer.Screen name='Backtest' component={BacktestLayout}/>
       <Drawer.Screen name='Diary' component={DiaryLayout}/>
@@ -51,6 +53,10 @@ function SectionDrawers() {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "TitanOne": require('./assets/fonts/TitanOne-Regular.ttf'),
+  })
+  
   return (
     <>
       <StatusBar />
