@@ -5,6 +5,7 @@ import { authUser } from "../../utils/auth"
 import { GlobalColors } from "../../constants/colors"
 import CustomButton from "../UI/CustomButton"
 import Ionicons from '@expo/vector-icons/Ionicons';
+import CustomTextInput from "../UI/CustomTextInput"
 
 export default function LogInForm() {
   const authContext = useContext(AuthContext)
@@ -46,13 +47,13 @@ export default function LogInForm() {
             </View>
         </View>}
         <Text style={styles.title}>Log in to your account</Text>
-        <TextInput style={[styles.formInput, {borderBottomColor: email.isFilled ? GlobalColors.colors.primary400 : 'red'}]} value={email.value} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email" placeholderTextColor={email.isFilled ? GlobalColors.colors.primary400 : "red"}/>
-        <TextInput style={[styles.formInput, {borderBottomColor: password.isFilled ? GlobalColors.colors.primary400 : 'red'}]} value={password.value} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" placeholderTextColor={password.isFilled ? GlobalColors.colors.primary400 : "red"} secureTextEntry/>
+        <CustomTextInput value={email} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email"/>
+        <CustomTextInput value={password} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" password={true}/>
         <CustomButton 
-            onPress={login}
-            backgroundColor={GlobalColors.colors.primary400}
-            color={GlobalColors.colors.primary100}
-            title="Log In"
+          onPress={login}
+          backgroundColor={GlobalColors.colors.primary400}
+          color={GlobalColors.colors.primary100}
+          title="Log In"
         />
     </View>  
   )

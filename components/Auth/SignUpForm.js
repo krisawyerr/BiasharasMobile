@@ -5,6 +5,7 @@ import { authUser } from "../../utils/auth"
 import { GlobalColors } from "../../constants/colors"
 import CustomButton from "../UI/CustomButton"
 import Ionicons from '@expo/vector-icons/Ionicons';
+import CustomTextInput from "../UI/CustomTextInput"
 
 export default function SignUpForm() {
   const authContext = useContext(AuthContext)
@@ -64,12 +65,12 @@ export default function SignUpForm() {
       </View>}
       <Text style={styles.title}>Sign up for Biasharas</Text>
       <View style={styles.nameView}>
-        <TextInput style={[styles.formInput, {borderBottomColor: fname.isFilled ? GlobalColors.colors.primary400 : 'red', flex: 1}]} value={fname.value} onChangeText={(e) => setFname({ value: e, isFilled: true })} placeholder="First Name" placeholderTextColor={fname.isFilled ? GlobalColors.colors.primary400 : "red"}/>
-        <TextInput style={[styles.formInput, {borderBottomColor: lname.isFilled ? GlobalColors.colors.primary400 : 'red', flex: 1}]} value={lname.value} onChangeText={(e) => setLname({ value: e, isFilled: true })} placeholder="Last Name" placeholderTextColor={lname.isFilled ? GlobalColors.colors.primary400 : "red"}/>
+        <CustomTextInput value={fname} onChangeText={(e) => setFname({ value: e, isFilled: true })} placeholder="First Name" halfWidth={true}/>
+        <CustomTextInput value={lname} onChangeText={(e) => setLname({ value: e, isFilled: true })} placeholder="Last Name" halfWidth={true}/>
       </View>
-      <TextInput style={[styles.formInput, {borderBottomColor: email.isFilled ? GlobalColors.colors.primary400 : 'red'}]} value={email.value} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email" placeholderTextColor={email.isFilled ? GlobalColors.colors.primary400 : "red"}/>
-      <TextInput style={[styles.formInput, {borderBottomColor: password.isFilled ? GlobalColors.colors.primary400 : 'red'}]} value={password.value} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" placeholderTextColor={password.isFilled ? GlobalColors.colors.primary400 : "red"} secureTextEntry/>
-      <TextInput style={[styles.formInput, {borderBottomColor: passwordConfirmed.isFilled ? GlobalColors.colors.primary400 : 'red'}]} value={passwordConfirmed.value} onChangeText={(e) => setPasswordConfirmed({ value: e, isFilled: true })} placeholder="Confirm Password" placeholderTextColor={passwordConfirmed.isFilled ? GlobalColors.colors.primary400 : "red"} secureTextEntry/>
+      <CustomTextInput value={email} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email"/>
+      <CustomTextInput value={password} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" password={true}/>
+      <CustomTextInput value={passwordConfirmed} onChangeText={(e) => setPasswordConfirmed({ value: e, isFilled: true })} placeholder="Confirm Password" password={true}/>
       <CustomButton 
         onPress={signUp}
         backgroundColor={GlobalColors.colors.primary400}

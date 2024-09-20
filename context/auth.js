@@ -10,22 +10,23 @@ export const AuthContext = createContext({
 });
 
 export default function AuthContextProvider({children}) {
-    const [authToken, setAuthToken] = useState()
-    const [user, setUser] = useState()
+    const [authToken, setAuthToken] = useState();
+    const [user, setUser] = useState();
 
-    function auth(token, email) {
-        setAuthToken(token);
-        AsyncStorage.setItem("token", token);
-
-        setUser(email);
-        AsyncStorage.setItem("user", email);
+    async function auth(token, email) {
+        if (token && email) {
+            setAuthToken(token);
+            await AsyncStorage.setItem("token", token);
+            setUser(email);
+            await AsyncStorage.setItem("user", email);
+        }
     }
 
-    function logout() {
+    async function logout() {
         setAuthToken(null);
-        AsyncStorage.removeItem("token")
+        await AsyncStorage.removeItem("token");
         setUser(null);
-        AsyncStorage.removeItem("user")
+        await AsyncStorage.removeItem("user");
     }
 
     const value = {
