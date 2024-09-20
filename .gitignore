@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+constants/keys.js
 
 # Expo
 .expo/

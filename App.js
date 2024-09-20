@@ -14,10 +14,19 @@ import DashboardStats from './screens/Dashboard/DashboardStats';
 import DashboardTrades from './screens/Dashboard/DashboardTrades';
 import DashboardForm from './screens/Dashboard/DashboardForm';
 import { GlobalColors } from './constants/colors';
+import AuthContextProvider, { AuthContext } from './context/auth';
+import { Button, Text, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import Login from './screens/Auth/Login';
+import SignUp from './screens/Auth/SignUp';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tabs = createBottomTabNavigator();
 
+//START
 export default function App() {
   const [fontsLoaded] = useFonts({
     "TitanOne": require('./assets/fonts/TitanOne-Regular.ttf'),
@@ -26,20 +35,51 @@ export default function App() {
   return (
     <>
       <StatusBar />
-      <NavigationContainer>
-        <SectionDrawers />
-      </NavigationContainer>
+      <AuthContextProvider>
+        <MainNavigator />
+      </AuthContextProvider>
     </>
   );
+}
+function MainNavigator() {
+  const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    async function fetchToken() {
+      const storedToken = await AsyncStorage.getItem("token");
+
+      if (storedToken) {
+        authContext.auth(storedToken);
+      }
+    }
+
+    fetchToken();
+  }, []);
+
+  return (
+    <NavigationContainer>
+      {authContext.isAuthed ? <SectionDrawers /> : <AuthStack />}
+    </NavigationContainer>
+  );
+}
+function AuthStack() {
+  return (
+    <Stack.Navigator screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name='login' component={Login} />
+      <Stack.Screen name='signup' component={SignUp} />
+    </Stack.Navigator>
+  )
 }
 function SectionDrawers() {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <DrawerContent {...props} />}
       screenOptions={{
-        drawerActiveBackgroundColor: GlobalColors.colors.primary900,
-        drawerActiveTintColor: GlobalColors.colors.primary300,
-        drawerInactiveTintColor: GlobalColors.colors.primary900,
+        drawerActiveBackgroundColor: GlobalColors.colors.primary400,
+        drawerActiveTintColor: GlobalColors.colors.primary100,
+        drawerInactiveTintColor: GlobalColors.colors.primary400,
         drawerStyle: { backgroundColor: GlobalColors.colors.primary200 },
         headerStyle: { backgroundColor: GlobalColors.colors.primary200 },
         headerTintColor: GlobalColors.colors.primary900,
@@ -69,6 +109,7 @@ function SectionDrawers() {
   );
 }
 
+//DRAWER PAGES
 function DashboardLayout() {
   const dashboardScreens = [
     { name: 'Stats', component: DashboardStats, icon: 'stats-chart-sharp', IconComponent: Ionicons },
@@ -95,13 +136,14 @@ function DiaryLayout() {
   return createTabNavigator(diaryScreens);
 }
 
+//EXTRACTION
 function createTabScreenOptions(iconName, IconComponent) {
-  return ({ focused }) => ({
-    tabBarIcon: () => (
+  return () => ({
+    tabBarIcon: ({ focused }) => (
       <IconComponent
         name={iconName}
         size={24}
-        color={focused ? GlobalColors.colors.primary900 : GlobalColors.colors.primary600}
+        color={focused ? GlobalColors.colors.primary800 : GlobalColors.colors.primary400}
       />
     )
   });
@@ -111,8 +153,8 @@ function createTabNavigator(screens) {
     <Tabs.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarInactiveTintColor: GlobalColors.colors.primary600,
-        tabBarActiveTintColor: GlobalColors.colors.primary900,
+        tabBarInactiveTintColor: GlobalColors.colors.primary400,
+        tabBarActiveTintColor: GlobalColors.colors.primary800,
         tabBarStyle: { backgroundColor: GlobalColors.colors.primary200 },
       }}
     >
@@ -128,12 +170,12 @@ function createTabNavigator(screens) {
   );
 }
 function createDrawerScreenOptions(iconName) {
-  return ({ focused }) => ({
-    drawerIcon: () => (
+  return () => ({
+    drawerIcon: ({ focused }) => (
       <Ionicons
         name={iconName}
         size={24}
-        color={focused ? GlobalColors.colors.primary300 : GlobalColors.colors.primary900}
+        color={focused ? GlobalColors.colors.primary100 : GlobalColors.colors.primary400}
       />
     ),
   });
