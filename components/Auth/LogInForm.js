@@ -6,6 +6,8 @@ import { GlobalColors } from "../../constants/colors"
 import CustomButton from "../UI/CustomButton"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomTextInput from "../UI/CustomTextInput"
+import CustomTitle from "../UI/CustomTitle"
+import ErrorMessage from "../UI/ErrorMessage"
 
 export default function LogInForm() {
   const authContext = useContext(AuthContext)
@@ -37,16 +39,8 @@ export default function LogInForm() {
 
   return (
     <View>
-        {error && <View style={styles.errorRootContainer}>
-            <View style={styles.errorContainer}>
-            <Ionicons name="close-circle" size={24} color="red" style={{marginRight: 10}}/>
-            <View>
-                <Text style={styles.mainErrorMessage}>{error.main}</Text>
-                <Text style={styles.subErrorMessage}>{error.sub}</Text>
-            </View>
-            </View>
-        </View>}
-        <Text style={styles.title}>Log in to your account</Text>
+        {error && <ErrorMessage error={error}/>}
+        <CustomTitle color={GlobalColors.colors.primary800} text='Log in to your account'/>
         <CustomTextInput value={email} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email"/>
         <CustomTextInput value={password} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" password={true}/>
         <CustomButton 
@@ -66,7 +60,8 @@ const styles = StyleSheet.create({
       height: 50,
       marginBottom: 10,
       borderRadius: 4,
-      overflow: "hidden"
+      overflow: "hidden",
+      marginTop: 10,
     },
     errorContainer: {
       backgroundColor: GlobalColors.colors.primary800,
@@ -90,10 +85,5 @@ const styles = StyleSheet.create({
       fontSize: 16,
       color: GlobalColors.colors.primary900,
       marginVertical: 15
-    },
-    title: {
-      fontWeight: "bold",
-      color: GlobalColors.colors.primary800,
-      fontSize: 25,
     },
 })

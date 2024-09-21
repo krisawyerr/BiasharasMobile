@@ -6,6 +6,8 @@ import { GlobalColors } from "../../constants/colors"
 import CustomButton from "../UI/CustomButton"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomTextInput from "../UI/CustomTextInput"
+import CustomTitle from "../UI/CustomTitle"
+import ErrorMessage from "../UI/ErrorMessage"
 
 export default function SignUpForm() {
   const authContext = useContext(AuthContext)
@@ -54,16 +56,8 @@ export default function SignUpForm() {
 
   return (
     <View>
-      {error && <View style={styles.errorRootContainer}>
-        <View style={styles.errorContainer}>
-          <Ionicons name="close-circle" size={24} color="red" style={{marginRight: 10}}/>
-          <View>
-            <Text style={styles.mainErrorMessage}>{error.main}</Text>
-            <Text style={styles.subErrorMessage}>{error.sub}</Text>
-          </View>
-        </View>
-      </View>}
-      <Text style={styles.title}>Sign up for Biasharas</Text>
+      {error && <ErrorMessage error={error}/>}
+      <CustomTitle color={GlobalColors.colors.primary800} text='Sign up for Biasharas'/>
       <View style={styles.nameView}>
         <CustomTextInput value={fname} onChangeText={(e) => setFname({ value: e, isFilled: true })} placeholder="First Name" halfWidth={true}/>
         <CustomTextInput value={lname} onChangeText={(e) => setLname({ value: e, isFilled: true })} placeholder="Last Name" halfWidth={true}/>
@@ -117,10 +111,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GlobalColors.colors.primary900,
     marginVertical: 15
-  },
-  title: {
-    fontWeight: "bold",
-    color: GlobalColors.colors.primary800,
-    fontSize: 25,
   },
 })

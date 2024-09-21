@@ -1,10 +1,18 @@
 import { StyleSheet, TextInput } from "react-native";
 import { GlobalColors } from "../../constants/colors";
 
-export default function CustomTextInput({value, onChangeText, placeholder, halfWidth, password}) {
+export default function CustomTextInput({ value, onChangeText, placeholder, halfWidth, password, keyboardType }) {
     return (
-        <TextInput style={[styles.formInput, {borderBottomColor: value.isFilled ? GlobalColors.colors.primary400 : 'red', flex: halfWidth && 1,}]} value={value.value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={value.isFilled ? GlobalColors.colors.primary400 : "red"} secureTextEntry={password}/>
-    )
+        <TextInput
+            style={[styles.formInput, { borderBottomColor: value.isFilled ? GlobalColors.colors.primary400 : 'red', flex: halfWidth && 1 }]}
+            value={value.value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={value.isFilled ? GlobalColors.colors.primary400 : "red"}
+            secureTextEntry={password}
+            keyboardType={keyboardType}
+        />
+    );
 }
 
 const styles = StyleSheet.create({
@@ -15,4 +23,4 @@ const styles = StyleSheet.create({
         color: GlobalColors.colors.primary900,
         marginVertical: 15
     },
-})
+});
