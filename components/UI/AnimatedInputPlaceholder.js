@@ -7,28 +7,14 @@ export default function AnimatedInputPlaceholder({ placeholderText, value }) {
 
     useEffect(() => {
         if (value.value) {
-            Animated.timing(fadeAnim, {
-                toValue: 1, 
-                duration: 500,
-                useNativeDriver: true,
-            }).start();
+            Animated.timing(fadeAnim, { toValue: 1,  duration: 500, useNativeDriver: true}).start();
         } else {
-            Animated.timing(fadeAnim, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: true,
-            }).start();
+            Animated.timing(fadeAnim, { toValue: 0, duration: 500, useNativeDriver: true}).start();
         }
     }, [value.value]);
 
     return (
-        <Animated.Text
-            style={{
-                ...styles.placeholderText,
-                color: value.isFilled ? GlobalColors.colors.primary400 : "red",
-                opacity: fadeAnim,
-            }}
-        >
+        <Animated.Text style={{ ...styles.placeholderText, color: value.isFilled ? GlobalColors.colors.primary400 : "red", opacity: fadeAnim}}>
             {placeholderText}
         </Animated.Text>
     );

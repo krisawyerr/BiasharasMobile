@@ -1,6 +1,6 @@
 import axios from "axios";
 import { db } from '../firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import { Keys } from "../constants/keys";
 
 export async function authUser(mode, email, password, fname, lname) {

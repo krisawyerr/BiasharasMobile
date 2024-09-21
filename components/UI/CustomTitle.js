@@ -7,8 +7,8 @@ export default function CustomTitle({color, text}) {
 }
 
 const styles = StyleSheet.create({
-    title: {
-      fontWeight: "bold",
-      fontSize: 25,
-    },
+  title: {
+    fontWeight: "bold",
+    fontSize: 25,
+  },
 })

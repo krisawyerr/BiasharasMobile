@@ -1,6 +1,4 @@
-import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { View, Text, Image, SafeAreaView, Pressable, StyleSheet } from 'react-native';
-import { GlobalColors } from '../../constants/colors';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 export default function CustomButton({onPress, backgroundColor, color, marginHorizontal, title}) {
     return (

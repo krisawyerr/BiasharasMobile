@@ -15,27 +15,17 @@ import DashboardTrades from './screens/Dashboard/DashboardTrades';
 import DashboardForm from './screens/Dashboard/DashboardForm';
 import { GlobalColors } from './constants/colors';
 import AuthContextProvider, { AuthContext } from './context/auth';
-import { Button, Text, View } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import Login from './screens/Auth/Login';
 import SignUp from './screens/Auth/SignUp';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import CustomToast from './components/UI/CustomToast';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './utils/toast';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tabs = createBottomTabNavigator();
-
-const toastConfig = {
-  error: ({ props }) => (
-    <CustomToast error={props.error || { main: 'Error', sub: '' }} type={"error"}/>
-  ),
-  success: ({ props }) => (
-    <CustomToast error={props.message} type={"success"}/>
-  )
-};
 
 //START
 export default function App() {
