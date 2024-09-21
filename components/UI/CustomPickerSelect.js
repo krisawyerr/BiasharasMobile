@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { GlobalColors } from "../../constants/colors";
 import RNPickerSelect from 'react-native-picker-select'; 
+import AnimatedInputPlaceholder from "./AnimatedInputPlaceholder";
 
 export default function CustomPickerSelect({ onValueChange, items, placeholderText, value }) {
     return (
         <View style={styles.rootContainer}>
-            {value.value && <Text style={{color: value.isFilled ? GlobalColors.colors.primary400 : "red"}}>{placeholderText}</Text>}
+            {value.value && <AnimatedInputPlaceholder placeholderText={placeholderText} value={value} />}
             <RNPickerSelect
                 onValueChange={onValueChange}
                 items={items}
@@ -47,6 +48,5 @@ const pickerSelectStyles = StyleSheet.create({
 const styles = StyleSheet.create({
     rootContainer: {
         marginVertical: 15
-    },  
+    },
 });
-
