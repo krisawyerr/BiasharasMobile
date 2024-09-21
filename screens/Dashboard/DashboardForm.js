@@ -1,6 +1,6 @@
 import { Button, SectionList, SectionListComponent, StyleSheet, Text, TextInput, View, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import { GlobalColors } from "../../constants/colors";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CustomTextInput from "../../components/UI/CustomTextInput";
 import RNPickerSelect from 'react-native-picker-select';
 import CustomPickerSelect from "../../components/UI/CustomPickerSelect";
@@ -9,8 +9,8 @@ import CustomButton from "../../components/UI/CustomButton";
 import CustomTitle from "../../components/UI/CustomTitle";
 import { AuthContext } from "../../context/auth";
 import { addTrade } from "../../utils/crud";
-import ErrorMessage from "../../components/UI/ErrorMessage";
 import { formatDate, formatPrice } from "../../utils/format";
+import Toast from "react-native-toast-message";
 
 export default function DashboardForm() {
     const authContext = useContext(AuthContext)
@@ -20,100 +20,89 @@ export default function DashboardForm() {
     const [assetName, setAssetName] = useState({ value: '', isFilled: true });
     const [tradingSession, setTradingSession] = useState({ value: '', isFilled: true });
     const [result, setResult] = useState({ value: '', isFilled: true });
-    const [error, setError] = useState()
+    const [error, setError] = useState(null)
 
-    function setFieldState(field, isFilled) {
-        switch (field) {
-            case 'pnl':
-                setPnL({ value: '', isFilled });
-                break;
-            case 'open':
-                setOpenTime({ value: '', isFilled });
-                break;
-            case 'close':
-                setCloseTime({ value: '', isFilled });
-                break;
-            case 'asset':
-                setAssetName({ value: '', isFilled });
-                break;
-            case 'session':
-                setTradingSession({ value: '', isFilled });
-                break;
-            case 'result':
-                setResult({ value: '', isFilled });
-                break;
-        }
+    const showError = () => {
+        Toast.show({
+            type: 'error',
+            props: { error: error }
+        });
     }
-    
-    function resetFields() {
-        setPnL({ value: '', isFilled: true });
-        setOpenTime({ value: '', isFilled: true });
-        setCloseTime({ value: '', isFilled: true });
-        setAssetName({ value: '', isFilled: true });
-        setTradingSession({ value: '', isFilled: true });
-        setResult({ value: '', isFilled: true });
+
+    const showSuccess = () => {
+        Toast.show({
+            type: 'success',
+            props: { message: { main: 'Trade Submitted', sub: 'Check trades tab to see trades' } }
+        });
     }
+
+    useEffect(() => {
+        if (error) showError()
+    }, [error])
 
     function submitTrade() {
-        const currentTime = new Date().getTime();
-        const values = {
-            pnl: pnl.value,
-            open: openTime.value,
-            close: closeTime.value,
-            asset: assetName.value,
-            session: tradingSession.value,
-            result: result.value,
-        };
-    
-        for (const [key, value] of Object.entries(values)) {
-            if (value.length === 0) {
-                setError({ main: 'Form Incomplete', sub: 'Please fill out entire form' });
-                setFieldState(key, false);
-                return;
-            }
+        const currentTime = new Date().getTime()
+
+        if (pnl.value.length === 0 || openTime.value.length === 0 || closeTime.value.length === 0 || assetName.value.length === 0 || tradingSession.value.length === 0 || result.value.length === 0) {
+            if (pnl.value.length === 0) setPnL({ value: '', isFilled: false });
+            if (openTime.value.length === 0) setOpenTime({ value: '', isFilled: false });
+            if (closeTime.value.length === 0) setCloseTime({ value: '', isFilled: false });
+            if (assetName.value.length === 0) setAssetName({ value: '', isFilled: false });
+            if (tradingSession.value.length === 0) setTradingSession({ value: '', isFilled: false });
+            if (result.value.length === 0) setResult({ value: '', isFilled: false });
+
+            setError({ main: 'Form Incomplete', sub: 'Please fill out entire form' });
+            return;
         }
-    
-        const pnlValue = Number(values.pnl);
-    
-        if (isNaN(pnlValue)) {
+
+        const pnlValue = pnl.value
+        if (pnlValue.length < 1 || isNaN(Number(pnlValue))) {
+            setPnL({ value: '', isFilled: false });
             setError({ main: 'PnL not a number', sub: 'Please enter a valid number' });
-            setFieldState('pnl', false);
             return;
         }
-    
-        const openDate = new Date(values.open);
-        const closeDate = new Date(values.close);
-    
-        if (isNaN(openDate.getTime()) || isNaN(closeDate.getTime())) {
+
+        if (isNaN(new Date(openTime.value).getTime()) || isNaN(new Date(closeTime.value).getTime())) {
+            if (isNaN(new Date(openTime.value).getTime())) setOpenTime({ value: '', isFilled: false });
+            if (isNaN(new Date(closeTime.value).getTime())) setCloseTime({ value: '', isFilled: false });
+
             setError({ main: 'Date entered wrong', sub: 'Please enter a valid date (YYYY-MM-DD)' });
-            if (isNaN(openDate.getTime())) setFieldState('open', false);
-            if (isNaN(closeDate.getTime())) setFieldState('close', false);
             return;
         }
-    
-        if (openDate > currentTime || closeDate > currentTime) {
+
+        if (new Date(openTime.value).getTime() > currentTime || new Date(closeTime.value).getTime() > currentTime) {
+            if (new Date(openTime.value).getTime() > currentTime) setOpenTime({ value: '', isFilled: false });       
+            if (new Date(closeTime.value).getTime() > currentTime) setCloseTime({ value: '', isFilled: false });     
+
             setError({ main: 'Invalid dates', sub: 'Date cannot be in future.' });
-            if (openDate > currentTime) setFieldState('open', false);
-            if (closeDate > currentTime) setFieldState('close', false);
             return;
         }
-    
-        if (openDate > closeDate) {
+
+        if (new Date(openTime.value).getTime() > new Date(closeTime.value).getTime()) {
+            setOpenTime({ value: '', isFilled: false });
+            setCloseTime({ value: '', isFilled: false });
+
             setError({ main: 'Invalid dates', sub: 'Open date must be on or before close date.' });
-            setFieldState('open', false);
-            setFieldState('close', false);
             return;
         }
-    
-        if ((values.result === "Win" && pnlValue < 0) || (values.result === "Loss" && pnlValue >= 0)) {
-            setError({ main: 'Result does not match PnL', sub: `PnL should be ${values.result === "Win" ? "positive" : "negative"}` });
+
+        if ((result.value === "Win" && Number(pnl.value) < 0) || (result.value === "Loss" && Number(pnl.value) >= 0)) {
+            if (result.value === "Win" && Number(pnl.value) < 0) setError({ main: 'Result doent match PnL', sub: 'PnL should be positive' }); 
+            if (result.value === "Loss" && Number(pnl.value) >= 0) setError({ main: 'Result doent match PnL', sub: 'PnL should be negative' }); 
+            
             return;
         }
-    
+
         try {
-            addTrade(authContext.user, values.asset, values.session, values.result, pnlValue, values.open, values.close);
-            setError(null);
-            resetFields();
+            addTrade(authContext.user, assetName.value, tradingSession.value, result.value, Number(pnlValue), openTime.value, closeTime.value);
+            setError(null); 
+            setPnL({ value: '', isFilled: true })
+            setOpenTime({ value: '', isFilled: true })
+            setCloseTime({ value: '', isFilled: true })
+            setAssetName({ value: '', isFilled: true })
+            setTradingSession({ value: '', isFilled: true })
+            setResult({ value: '', isFilled: true })
+            showSuccess()
         } catch (error) {
             console.log("Error submitting trade:", error);
             setError({ main: 'Error', sub: 'An error occurred while submitting the trade' });
@@ -122,7 +111,6 @@ export default function DashboardForm() {
     
     return (
         <KeyboardAvoidingView style={styles.rootView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
-            {error && <ErrorMessage error={error} />}
             <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
                 <CustomTitle color={GlobalColors.colors.primary800} text='Submit a trade' />
                 <CustomPickerSelect value={assetName} onValueChange={(e) => setAssetName({ value: e, isFilled: true })} items={Trading.Assets} placeholderText='Asset Name' />

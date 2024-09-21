@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/auth"
 import { StyleSheet, Text, TextInput, View } from "react-native"
 import { authUser } from "../../utils/auth"
@@ -7,13 +7,25 @@ import CustomButton from "../UI/CustomButton"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomTextInput from "../UI/CustomTextInput"
 import CustomTitle from "../UI/CustomTitle"
-import ErrorMessage from "../UI/ErrorMessage"
+import CustomToast from "../UI/CustomToast"
+import Toast from "react-native-toast-message"
 
 export default function LogInForm() {
   const authContext = useContext(AuthContext)
   const [email, setEmail] = useState({ value: '', isFilled: true })
   const [password, setPassword] = useState({ value: '', isFilled: true })
   const [error, setError] = useState()
+
+  const showError = () => {
+    Toast.show({
+        type: 'error',
+        props: { error: error }
+    });
+}
+
+  useEffect(() => {
+    if (error) showError()
+  }, [error])
 
   async function login() {
     if (email.value.length === 0 || password.value.length === 0) {
@@ -39,7 +51,6 @@ export default function LogInForm() {
 
   return (
     <View>
-        {error && <ErrorMessage error={error}/>}
         <CustomTitle color={GlobalColors.colors.primary800} text='Log in to your account'/>
         <CustomTextInput value={email} onChangeText={(e) => setEmail({ value: e, isFilled: true })} placeholder="Email"/>
         <CustomTextInput value={password} onChangeText={(e) => setPassword({ value: e, isFilled: true })} placeholder="Password" password={true}/>

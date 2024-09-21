@@ -21,10 +21,21 @@ import Login from './screens/Auth/Login';
 import SignUp from './screens/Auth/SignUp';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import CustomToast from './components/UI/CustomToast';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tabs = createBottomTabNavigator();
+
+const toastConfig = {
+  error: ({ props }) => (
+    <CustomToast error={props.error || { main: 'Error', sub: '' }} type={"error"}/>
+  ),
+  success: ({ props }) => (
+    <CustomToast error={props.message} type={"success"}/>
+  )
+};
 
 //START
 export default function App() {
@@ -38,6 +49,7 @@ export default function App() {
       <AuthContextProvider>
         <MainNavigator />
       </AuthContextProvider>
+      <Toast config={toastConfig} />
     </>
   );
 }

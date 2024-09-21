@@ -7,13 +7,13 @@ export default function CustomTextInput({ value, onChangeText, placeholder, half
     const inputAccessoryViewID = 'uniqueID';
 
     return (
-        <View style={styles.rootContainer}>
+        <View style={[styles.rootContainer, {flex: halfWidth && 1 }]}>
             {value.value && <AnimatedInputPlaceholder placeholderText={placeholder} value={value} />}
             
             <TextInput
                 style={[
                     styles.formInput,
-                    { borderBottomColor: value.isFilled ? GlobalColors.colors.primary400 : 'red', flex: halfWidth && 1 },
+                    { borderBottomColor: value.isFilled ? GlobalColors.colors.primary400 : 'red'},
                 ]}
                 value={value.value}
                 onChangeText={onChangeText}
