@@ -1,4 +1,8 @@
 export const Trading = {
+    PercentOrFixed: [
+        { label: 'Percent', value: 'Percent' },
+        { label: 'Fixed Price', value: 'Fixed Price' },     
+    ],
     Result: [
         { label: 'Win', value: 'Win' },
         { label: 'Loss', value: 'Loss' },

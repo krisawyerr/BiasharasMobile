@@ -1,8 +1,8 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
-export default function CustomButton({onPress, backgroundColor, color, marginHorizontal, title}) {
+export default function CustomButton({onPress, backgroundColor, color, marginHorizontal, title, halfWidth}) {
     return (
-        <Pressable onPress={onPress}>
+        <Pressable onPress={onPress} style={{flex: halfWidth && 1 }}>
             <View style={[styles.rootView, {backgroundColor: backgroundColor, marginHorizontal: marginHorizontal}]}>
                 <Text style={{color: color, textAlign: 'center'}}>{title}</Text>
             </View>
