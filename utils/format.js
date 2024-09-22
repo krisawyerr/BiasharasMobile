@@ -23,6 +23,21 @@ export function formatPrice(input) {
     return cleaned.length > 10 ? cleaned.slice(0, 10) : cleaned;
 }
 
+export function formatPercent(amount) {
+    const number = parseFloat(amount);
+    if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
+
+    return `${parseInt(number * 100)}%`;
+}
+
+export function formatDollarAmount(amount) {
+    const number = parseFloat(amount);
+    if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
+
+    const formattedNumber = Math.abs(number).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return `${number < 0 ? '-$' : '$'}${formattedNumber}`;
+}
+
 export function formatDollarAmountShorthand(amount) {
     const number = parseFloat(amount);
     if (isNaN(number)) throw new Error("Invalid input: must be a valid number");

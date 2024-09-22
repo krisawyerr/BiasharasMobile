@@ -2,10 +2,14 @@ import { Pressable } from 'react-native';
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CustomLineGraph from '../../components/UI/CustomLineGraph';
+import { formatDollarAmount, formatPercent } from '../../utils/format';
+import { GlobalColors } from '../../constants/colors';
 
 export default function DashboardStats() {
   const [graphData, setGraphData] = useState([100, 120, 90, 150, 80, 200, 170]);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const pnl = graphData[graphData.length - 1] - graphData[0]
+  const percent = formatPercent(pnl / graphData[0])
 
   const addRandomValue = () => {
     const lastValue = graphData[graphData.length - 1];
@@ -19,14 +23,17 @@ export default function DashboardStats() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.priceText}>
-        Current Price: {currentPrice} || Trades: {graphData.length}
-      </Text>
+      <Text style={styles.titleText}>Balance</Text>
+      <Text style={styles.priceText}>{formatDollarAmount(currentPrice)}</Text>
+      <Text style={styles.changeText}>{formatDollarAmount(pnl)}: ({percent})</Text>
 
-      <CustomLineGraph graphData={graphData} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} numberColor="gray" lineColor="blue" selectorColor="red"/>
+      <CustomLineGraph graphData={graphData} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} numberColor={GlobalColors.colors.primary400} lineColor={GlobalColors.colors.primary900} selectorColor={GlobalColors.colors.primary400}/>
 
       <Pressable style={styles.button} onPress={addRandomValue}>
         <Text style={styles.buttonText}>Add Random Value</Text>
+      </Pressable>
+      <Pressable style={styles.button} onPress={() => setGraphData([100, 120, 90, 150, 80, 200, 170])}>
+        <Text style={styles.buttonText}>Reset</Text>
       </Pressable>
     </View>
   );
@@ -34,13 +41,25 @@ export default function DashboardStats() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    marginTop: 20,
-    width: '100%',
+    padding: 20,
+    backgroundColor: GlobalColors.colors.primary100,
+    flex: 1
   },
   priceText: {
-    fontSize: 16,
-    marginVertical: 10,
+    fontSize: 35,
+    fontWeight: "800",
+    color: GlobalColors.colors.primary900,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "500",
+    color: GlobalColors.colors.primary400,
+  },
+  changeText: {
+    fontSize: 20,
+    fontWeight: "500",
+    color: GlobalColors.colors.primary400,
+    marginBottom: 30
   },
   button: {
     backgroundColor: 'blue',
