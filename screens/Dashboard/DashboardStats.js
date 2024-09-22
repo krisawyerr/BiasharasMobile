@@ -9,7 +9,7 @@ export default function DashboardStats() {
   const [graphData, setGraphData] = useState([100, 120, 90, 150, 80, 200, 170]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const pnl = graphData[graphData.length - 1] - graphData[0]
-  const percent = formatPercent(pnl / graphData[0])
+  const percent = graphData[0] !== 0 ? formatPercent(pnl / graphData[0]) : formatPercent(0) 
 
   const addRandomValue = () => {
     const lastValue = graphData[graphData.length - 1];
@@ -32,7 +32,7 @@ export default function DashboardStats() {
       <Pressable style={styles.button} onPress={addRandomValue}>
         <Text style={styles.buttonText}>Add Random Value</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={() => setGraphData([100, 120, 90, 150, 80, 200, 170])}>
+      <Pressable style={styles.button} onPress={() => setGraphData([0, 0])}>
         <Text style={styles.buttonText}>Reset</Text>
       </Pressable>
     </View>

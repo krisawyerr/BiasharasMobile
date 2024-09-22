@@ -11,7 +11,8 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
     const horizontalPadding = 23;
     const maxValue = Math.max(...graphData);
     const minValue = Math.min(...graphData);
-    const scaleY = (height - 2 * paddingVertical) / (maxValue - minValue);
+    // Handle the case where all values in graphData are the same
+    const scaleY = maxValue === minValue ? 0 : (height - 2 * paddingVertical) / (maxValue - minValue);
 
     const handleGestureEvent = (event) => {
         const { x } = event.nativeEvent;
@@ -38,12 +39,18 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                 <Svg width={graphWidth} height={height}>
                     {graphData.map((value, index) => {
                         const x1 = (index * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
-                        const y1 = height - paddingVertical - (value - minValue) * scaleY;
+                        // If all values are the same, draw a horizontal line
+                        const y1 = scaleY === 0 
+                            ? height / 2 
+                            : height - paddingVertical - (value - minValue) * scaleY;
 
                         const x2 = index === graphData.length - 1 
                             ? graphWidth - horizontalPadding 
                             : ((index + 1) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
-                        const y2 = index === graphData.length - 1 ? y1 : height - paddingVertical - (graphData[index + 1] - minValue) * scaleY;
+                        const y2 = index === graphData.length - 1 ? y1 : 
+                            scaleY === 0 
+                                ? height / 2 
+                                : height - paddingVertical - (graphData[index + 1] - minValue) * scaleY;
 
                         return <Line key={index} x1={x1} y1={y1} x2={x2} y2={y2} stroke={lineColor} strokeWidth="2" />;
                     })}
@@ -61,7 +68,9 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                             />
                             <Circle
                                 cx={(selectedIndex * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
-                                cy={height - paddingVertical - (graphData[selectedIndex] - minValue) * scaleY}
+                                cy={scaleY === 0 
+                                    ? height / 2 
+                                    : height - paddingVertical - (graphData[selectedIndex] - minValue) * scaleY}
                                 r={5}
                                 fill={selectorColor}
                             />
@@ -70,7 +79,9 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
 
                     <SvgText
                         x={(graphData.indexOf(maxValue) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
-                        y={height - paddingVertical - (maxValue - minValue) * scaleY - 3}
+                        y={scaleY === 0 
+                            ? height / 2 - 3 
+                            : height - paddingVertical - (maxValue - minValue) * scaleY - 3}
                         fill={numberColor}
                         fontSize="12"
                         textAnchor="middle"
@@ -79,7 +90,9 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                     </SvgText>
                     <SvgText
                         x={(graphData.indexOf(minValue) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
-                        y={height - paddingVertical - (minValue - minValue) * scaleY + 13}
+                        y={scaleY === 0 
+                            ? height / 2 + 13 
+                            : height - paddingVertical - (minValue - minValue) * scaleY + 13}
                         fill={numberColor}
                         fontSize="12"
                         textAnchor="middle"
