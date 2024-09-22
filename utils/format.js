@@ -22,3 +22,26 @@ export function formatPrice(input) {
 
     return cleaned.length > 10 ? cleaned.slice(0, 10) : cleaned;
 }
+
+export function formatDollarAmountShorthand(amount) {
+    const number = parseFloat(amount);
+    if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
+  
+    let newNumber;
+    let formattedNumber = "";
+  
+    if (Math.abs(number) >= 1e9) {
+        newNumber = (number / 1e9).toFixed(Math.abs(number / 1e9) < 10 ? 1 : 0);
+        formattedNumber ='B';
+    } else if (Math.abs(number) >= 1e6) {
+        newNumber = (number / 1e6).toFixed(Math.abs(number / 1e6) < 10 ? 1 : 0);
+        formattedNumber ='M';
+    } else if (Math.abs(number) >= 1e3) {
+        newNumber = (number / 1e3).toFixed(Math.abs(number / 1e3) < 10 ? 1 : 0);
+        formattedNumber ='K';
+    } else {
+        newNumber = Math.round(number).toString();
+    }
+  
+    return `${newNumber < 0 ? '-$' : '$'}${Math.abs(newNumber)}${formattedNumber}`;
+}

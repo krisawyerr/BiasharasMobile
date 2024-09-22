@@ -22,6 +22,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './utils/toast';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -37,7 +38,8 @@ export default function App() {
     <>
       <StatusBar />
       <AuthContextProvider>
-        <MainNavigator />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <MainNavigator /></GestureHandlerRootView>
       </AuthContextProvider>
       <Toast config={toastConfig} />
     </>
