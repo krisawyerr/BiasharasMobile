@@ -78,7 +78,7 @@ export function formatDollarAmountShorthand(amount) {
 }
 
 export function formatPercent(amount) {
-    const number = parseFloat(amount);
+    const number = parseFloat(amount*100);
     if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
 
     if (Math.abs(number) >= 1e11) {

@@ -16,8 +16,8 @@ export default function BacktesterStats() {
     const wins = trades.filter((trade) => trade.type === 'win').length
     const losses = trades.filter((trade) => trade.type === 'loss').length
     const winRate = tradesCount !== 0 ? formatPercent(wins / tradesCount) : formatPercent(0)
-    const avgWin = wins.length > 0 ? formatDollarAmount(trades.filter((trade) => trade.type === 'win').reduce((sum, item) => sum + item.pnl, 0) / wins) : 0
-    const avgLoss = losses.length > 0 ? formatDollarAmount(trades.filter((trade) => trade.type === 'loss').reduce((sum, item) => sum + item.pnl, 0) / losses) : 0
+    const avgWin = wins > 0 ? formatDollarAmount(trades.filter((trade) => trade.type === 'win').reduce((sum, item) => sum + item.pnl, 0) / wins) : 0
+    const avgLoss = losses > 0 ? formatDollarAmount(trades.filter((trade) => trade.type === 'loss').reduce((sum, item) => sum + item.pnl, 0) / losses) : 0
     const [maxDrawdown, setMaxDrawdown] = useState()
     const [maxDrawdownPercent, setMaxDrawdownPercent] = useState()
     const [consecutiveWins, setConsecutiveWins] = useState()
@@ -90,7 +90,7 @@ export default function BacktesterStats() {
                 <CustomStatDisplay halfwidth={true} title="Loss" mainStat={`${losses}`}/> 
             </View>  
             <View style={{flexDirection: "row"}}>
-                <CustomStatDisplay halfwidth={true} title="Win Rate" mainStat={winRate} subStat1={`${wins} / ${losses}`}/> 
+                <CustomStatDisplay halfwidth={true} title="Win Rate" mainStat={winRate} subStat1={`${wins} / ${tradesCount}`}/> 
                 <CustomStatDisplay halfwidth={true} title="Max Drowdown" mainStat={maxDrawdown} subStat1={maxDrawdownPercent}/>
             </View>   
             <View style={{flexDirection: "row"}}>
