@@ -1,5 +1,5 @@
 import { Alert, Pressable } from 'react-native';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CustomLineGraph from '../../components/UI/CustomLineGraph';
 import { formatDollarAmount, formatPercent } from '../../utils/format';
@@ -10,8 +10,10 @@ import CustomPickerSelect from '../../components/UI/CustomPickerSelect';
 import { Trading } from '../../constants/trading';
 import { showError } from '../../utils/toast';
 import { BacktestTrades } from '../../classes/BacktestTrades';
+import { AuthContext } from '../../context/auth';
 
 export default function DashboardStats() {
+  const authContext = useContext(AuthContext)
   const [graphData, setGraphData] = useState([new BacktestTrades("deposit", 0, 0), new BacktestTrades("deposit", 0, 0)]);
   const [graphDataTotals, setGraphTotals] = useState([0,0]);
   const [initialCapital, setInitialCapital] = useState({value: "", isFilled: true});
@@ -40,6 +42,11 @@ export default function DashboardStats() {
       setGraphTotals(tempArray)
     }
 
+    function saveToContext() {
+      authContext.setBacktest(graphData)
+    }
+
+    saveToContext()
     fetchTotals()
   }, [graphData])
 
@@ -110,7 +117,7 @@ export default function DashboardStats() {
 
     const lastValue = graphData[graphData.length - 1].totalWithPnL;
     const newValue = type === "win" ? lastValue + Number(winFixedPrice.value) : lastValue - Number(lossFixedPrice.value)
-    setGraphData((prevData) => [...prevData, new BacktestTrades(type, Number(winFixedPrice.value), newValue)]);
+    setGraphData((prevData) => [...prevData, new BacktestTrades(type, type === "win" ? Number(winFixedPrice.value): Number(lossFixedPrice.value), newValue)]);
     setError(null)
   };
 
