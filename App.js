@@ -1,6 +1,5 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
-import Backtest from './screens/Backtest/Backtest';
 import Diary from './screens/Diary/Diary';
 import Profile from './screens/Profile/Profile';
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,6 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './utils/toast';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Backtester from './screens/Backtest/Backtester';
+import BacktesterStats from './screens/Backtest/BacktesterStats';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -125,8 +126,8 @@ function DashboardLayout() {
 }
 function BacktestLayout() {
   const backtestScreens = [
-    { name: 'Backtester', component: Backtest, icon: 'play-back', IconComponent: Ionicons },
-    { name: 'Stats', component: Backtest, icon: 'stats-chart-sharp', IconComponent: Ionicons },
+    { name: 'Backtester', component: Backtester, icon: 'play-back', IconComponent: Ionicons },
+    { name: 'Stats', component: BacktesterStats, icon: 'stats-chart-sharp', IconComponent: Ionicons },
   ];
 
   return createTabNavigator(backtestScreens);

@@ -23,40 +23,86 @@ export function formatPrice(input) {
     return cleaned.length > 10 ? cleaned.slice(0, 10) : cleaned;
 }
 
-export function formatPercent(amount) {
-    const number = parseFloat(amount);
-    if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
-
-    return `${parseInt(number * 100)}%`;
-}
-
 export function formatDollarAmount(amount) {
     const number = parseFloat(amount);
     if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
 
-    const formattedNumber = Math.abs(number).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return `${number < 0 ? '-$' : '$'}${formattedNumber}`;
+    if (Math.abs(number) >= 1e11) {
+        return `${number < 0 ? '-$' : '$'}${Math.abs(number).toExponential(0)}`;
+    }
+
+    let newNumber;
+    let formattedNumber = "";
+
+    if (Math.abs(number) >= 1e9) {
+        newNumber = (number / 1e9).toString();
+        formattedNumber = 'B';
+    } else {
+        newNumber = Math.abs(number).toString(); 
+    }
+
+    const isLessThanTen = Math.abs(parseFloat(newNumber)) < 10;
+    newNumber = isLessThanTen ? newNumber.slice(0, newNumber.indexOf('.') + 2) : newNumber.split('.')[0];
+
+    return `${number < 0 ? '-$' : '$'}${Math.abs(newNumber).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${formattedNumber}`;
 }
 
 export function formatDollarAmountShorthand(amount) {
     const number = parseFloat(amount);
     if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
-  
+
+    if (Math.abs(number) >= 1e11) {
+        return `${number < 0 ? '-$' : '$'}${Math.abs(number).toExponential(0)}`;
+    }
+
     let newNumber;
     let formattedNumber = "";
-  
+
     if (Math.abs(number) >= 1e9) {
-        newNumber = (number / 1e9).toFixed(Math.abs(number / 1e9) < 10 ? 1 : 0);
-        formattedNumber ='B';
+        newNumber = (number / 1e9).toString();
+        formattedNumber = 'B';
     } else if (Math.abs(number) >= 1e6) {
-        newNumber = (number / 1e6).toFixed(Math.abs(number / 1e6) < 10 ? 1 : 0);
-        formattedNumber ='M';
+        newNumber = (number / 1e6).toString();
+        formattedNumber = 'M';
     } else if (Math.abs(number) >= 1e3) {
-        newNumber = (number / 1e3).toFixed(Math.abs(number / 1e3) < 10 ? 1 : 0);
-        formattedNumber ='K';
+        newNumber = (number / 1e3).toString();
+        formattedNumber = 'K';
     } else {
-        newNumber = Math.round(number).toString();
+        newNumber = Math.abs(number).toString(); 
     }
-  
-    return `${newNumber < 0 ? '-$' : '$'}${Math.abs(newNumber)}${formattedNumber}`;
+
+    const isLessThanTen = Math.abs(parseFloat(newNumber)) < 10;
+    newNumber = isLessThanTen ? newNumber.slice(0, newNumber.indexOf('.') + 2) : newNumber.split('.')[0];
+
+    return `${number < 0 ? '-$' : '$'}${Math.abs(newNumber)}${formattedNumber}`;
+}
+
+export function formatPercent(amount) {
+    const number = parseFloat(amount);
+    if (isNaN(number)) throw new Error("Invalid input: must be a valid number");
+
+    if (Math.abs(number) >= 1e11) {
+        return `${number.toExponential(0)}%`;
+    }
+
+    let newNumber;
+    let formattedNumber = "";
+
+    if (Math.abs(number) >= 1e9) {
+        newNumber = (number / 1e9).toString();
+        formattedNumber = 'B';
+    } else if (Math.abs(number) >= 1e6) {
+        newNumber = (number / 1e6).toString();
+        formattedNumber = 'M';
+    } else if (Math.abs(number) >= 1e3) {
+        newNumber = (number / 1e3).toString();
+        formattedNumber = 'K';
+    } else {
+        newNumber = number.toString(); 
+    }
+
+    const isLessThanTen = Math.abs(parseFloat(newNumber)) < 10;
+    newNumber = isLessThanTen ? newNumber.slice(0, newNumber.indexOf('.') + 2) : newNumber.split('.')[0];
+
+    return `${newNumber}${formattedNumber}%`;
 }
