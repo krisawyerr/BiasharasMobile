@@ -5,19 +5,18 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import { formatDollarAmountShorthand } from '../../utils/format';
 
 export default function CustomLineGraph({ graphData, selectedIndex, setSelectedIndex, numberColor, lineColor, selectorColor }) {
-    const [graphWidth, setGraphWidth] = useState(0);
-    const height = 200;
+    const [graphDimensions, setGraphDimensions] = useState({ width: 0, height: 0 });
     const paddingVertical = 15;
     const horizontalPadding = 23;
+
     const maxValue = Math.max(...graphData);
     const minValue = Math.min(...graphData);
-    // Handle the case where all values in graphData are the same
-    const scaleY = maxValue === minValue ? 0 : (height - 2 * paddingVertical) / (maxValue - minValue);
+    const scaleY = maxValue === minValue ? 0 : (graphDimensions.height - 2 * paddingVertical) / (maxValue - minValue);
 
     const handleGestureEvent = (event) => {
         const { x } = event.nativeEvent;
-        const relativeX = x - horizontalPadding; 
-        const index = Math.round((relativeX / (graphWidth - 2 * horizontalPadding)) * (graphData.length - 1));
+        const relativeX = x - horizontalPadding;
+        const index = Math.round((relativeX / (graphDimensions.width - 2 * horizontalPadding)) * (graphData.length - 1));
         if (index >= 0 && index < graphData.length) {
             setSelectedIndex(index);
         }
@@ -32,25 +31,24 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
             <View
                 style={styles.graphContainer}
                 onLayout={(event) => {
-                    const { width } = event.nativeEvent.layout;
-                    setGraphWidth(width);
+                    const { width, height } = event.nativeEvent.layout;
+                    setGraphDimensions({ width, height });
                 }}
             >
-                <Svg width={graphWidth} height={height}>
+                <Svg width={graphDimensions.width} height={graphDimensions.height}>
                     {graphData.map((value, index) => {
-                        const x1 = (index * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
-                        // If all values are the same, draw a horizontal line
+                        const x1 = (index * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
                         const y1 = scaleY === 0 
-                            ? height / 2 
-                            : height - paddingVertical - (value - minValue) * scaleY;
+                            ? graphDimensions.height / 2 
+                            : graphDimensions.height - paddingVertical - (value - minValue) * scaleY;
 
                         const x2 = index === graphData.length - 1 
-                            ? graphWidth - horizontalPadding 
-                            : ((index + 1) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
+                            ? graphDimensions.width - horizontalPadding 
+                            : ((index + 1) * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding;
                         const y2 = index === graphData.length - 1 ? y1 : 
                             scaleY === 0 
-                                ? height / 2 
-                                : height - paddingVertical - (graphData[index + 1] - minValue) * scaleY;
+                                ? graphDimensions.height / 2 
+                                : graphDimensions.height - paddingVertical - (graphData[index + 1] - minValue) * scaleY;
 
                         return <Line key={index} x1={x1} y1={y1} x2={x2} y2={y2} stroke={lineColor} strokeWidth="2" />;
                     })}
@@ -58,19 +56,19 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                     {selectedIndex !== null && (
                         <>
                             <Line
-                                x1={(selectedIndex * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
+                                x1={(selectedIndex * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
                                 y1={paddingVertical}
-                                x2={(selectedIndex * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
-                                y2={height - paddingVertical}
+                                x2={(selectedIndex * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
+                                y2={graphDimensions.height - paddingVertical}
                                 stroke={selectorColor}
                                 strokeWidth="2"
                                 strokeDasharray="5, 5"
                             />
                             <Circle
-                                cx={(selectedIndex * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
+                                cx={(selectedIndex * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
                                 cy={scaleY === 0 
-                                    ? height / 2 
-                                    : height - paddingVertical - (graphData[selectedIndex] - minValue) * scaleY}
+                                    ? graphDimensions.height / 2 
+                                    : graphDimensions.height - paddingVertical - (graphData[selectedIndex] - minValue) * scaleY}
                                 r={5}
                                 fill={selectorColor}
                             />
@@ -78,10 +76,10 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                     )}
 
                     <SvgText
-                        x={(graphData.indexOf(maxValue) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
+                        x={(graphData.indexOf(maxValue) * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
                         y={scaleY === 0 
-                            ? height / 2 - 3 
-                            : height - paddingVertical - (maxValue - minValue) * scaleY - 3}
+                            ? graphDimensions.height / 2 - 3 
+                            : graphDimensions.height - paddingVertical - (maxValue - minValue) * scaleY - 3}
                         fill={numberColor}
                         fontSize="12"
                         textAnchor="middle"
@@ -89,10 +87,10 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
                         {formatDollarAmountShorthand(maxValue)}
                     </SvgText>
                     <SvgText
-                        x={(graphData.indexOf(minValue) * (graphWidth - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
+                        x={(graphData.indexOf(minValue) * (graphDimensions.width - 2 * horizontalPadding)) / (graphData.length - 1) + horizontalPadding}
                         y={scaleY === 0 
-                            ? height / 2 + 13 
-                            : height - paddingVertical - (minValue - minValue) * scaleY + 13}
+                            ? graphDimensions.height / 2 + 13 
+                            : graphDimensions.height - paddingVertical - (minValue - minValue) * scaleY + 13}
                         fill={numberColor}
                         fontSize="12"
                         textAnchor="middle"
@@ -107,7 +105,7 @@ export default function CustomLineGraph({ graphData, selectedIndex, setSelectedI
 
 const styles = StyleSheet.create({
     graphContainer: {
-        height: 200,
+        flex: 1,
         width: '100%',
     },
 });

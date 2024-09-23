@@ -1,4 +1,3 @@
-import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import { GlobalColors } from "../../constants/colors";
 import { useContext, useEffect, useState } from "react";
 import CustomTextInput from "../../components/UI/CustomTextInput";
@@ -10,6 +9,7 @@ import { AuthContext } from "../../context/auth";
 import { addTrade } from "../../utils/crud";
 import { formatDate, formatPrice } from "../../utils/format";
 import { showError, showSuccess } from "../../utils/toast";
+import CustomKeyboardScrollView from "../../components/UI/CustomKeyboardScrollView";
 
 export default function DashboardForm() {
     const authContext = useContext(AuthContext)
@@ -103,31 +103,16 @@ export default function DashboardForm() {
     }
     
     return (
-        <KeyboardAvoidingView style={styles.rootView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
-            <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
-                <CustomTitle color={GlobalColors.colors.primary800} text='Submit a trade' />
-                <CustomPickerSelect value={assetName} onValueChange={(e) => setAssetName({ value: e, isFilled: true })} items={Trading.Assets} placeholderText='Asset Name' />
-                {assetName === "Other" && <CustomTextInput value={assetName} onChangeText={(e) => setAssetName({ value: e, isFilled: true })} placeholder="Enter Other Asset Name" />}
-                <CustomPickerSelect value={tradingSession} onValueChange={(e) => setTradingSession({ value: e, isFilled: true })} items={Trading.Sessions} placeholderText='Trading Session' />
-                <CustomPickerSelect value={result} onValueChange={(e) => setResult({ value: e, isFilled: true })} items={Trading.Result} placeholderText='Result' />
-                {result.value && <CustomTextInput value={pnl} onChangeText={(e) => setPnL({ value: formatPrice(e), isFilled: true })} placeholder="Profit / Loss" />}
-                <CustomTextInput value={openTime} onChangeText={(e) => setOpenTime({ value: formatDate(e), isFilled: true })} placeholder="Date Opened (YYYY-MM-DD)" keyboardType="number-pad" maxLength={10}/>
-                <CustomTextInput value={closeTime} onChangeText={(e) => setCloseTime({ value: formatDate(e), isFilled: true })} placeholder="Date Closed (YYYY-MM-DD)" keyboardType="number-pad" maxLength={10}/>
-                <CustomButton backgroundColor={GlobalColors.colors.primary400} color={GlobalColors.colors.primary100} title="Submit" onPress={submitTrade} />
-            </ScrollView>
-        </KeyboardAvoidingView>
+        <CustomKeyboardScrollView>
+            <CustomTitle color={GlobalColors.colors.primary800} text='Submit a trade' />
+            <CustomPickerSelect value={assetName} onValueChange={(e) => setAssetName({ value: e, isFilled: true })} items={Trading.Assets} placeholderText='Asset Name' />
+            {assetName === "Other" && <CustomTextInput value={assetName} onChangeText={(e) => setAssetName({ value: e, isFilled: true })} placeholder="Enter Other Asset Name" />}
+            <CustomPickerSelect value={tradingSession} onValueChange={(e) => setTradingSession({ value: e, isFilled: true })} items={Trading.Sessions} placeholderText='Trading Session' />
+            <CustomPickerSelect value={result} onValueChange={(e) => setResult({ value: e, isFilled: true })} items={Trading.Result} placeholderText='Result' />
+            {result.value && <CustomTextInput value={pnl} onChangeText={(e) => setPnL({ value: formatPrice(e), isFilled: true })} placeholder="Profit / Loss" />}
+            <CustomTextInput value={openTime} onChangeText={(e) => setOpenTime({ value: formatDate(e), isFilled: true })} placeholder="Date Opened (YYYY-MM-DD)" keyboardType="number-pad" maxLength={10}/>
+            <CustomTextInput value={closeTime} onChangeText={(e) => setCloseTime({ value: formatDate(e), isFilled: true })} placeholder="Date Closed (YYYY-MM-DD)" keyboardType="number-pad" maxLength={10}/>
+            <CustomButton backgroundColor={GlobalColors.colors.primary400} color={GlobalColors.colors.primary100} title="Submit" onPress={submitTrade} />
+        </CustomKeyboardScrollView>
     );
-
 }
-
-const styles = StyleSheet.create({
-    rootView: {
-        backgroundColor: GlobalColors.colors.primary100,
-        flex: 1,
-        paddingHorizontal: 25,
-    },
-    scrollViewContent: {
-        flexGrow: 1,
-        paddingVertical: 10,
-    },
-});
