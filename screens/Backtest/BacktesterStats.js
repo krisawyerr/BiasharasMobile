@@ -74,8 +74,6 @@ export default function BacktesterStats() {
         calculateMaxDrawdown()
     }, [trades, setMaxDrawdown])
       
-
-    console.log(trades.filter((trade) => trade.type === 'loss'))
     return (
         <View style={styles.container}>
             <View style={{flexDirection: "row"}}>

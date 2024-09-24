@@ -1,26 +1,23 @@
-import { GlobalColors } from "../../constants/colors";
-import { useContext, useEffect, useState } from "react";
-import CustomTextInput from "../../components/UI/CustomTextInput";
-import CustomPickerSelect from "../../components/UI/CustomPickerSelect";
-import { Trading } from "../../constants/trading";
-import CustomButton from "../../components/UI/CustomButton";
-import CustomTitle from "../../components/UI/CustomTitle";
+import { useEffect, useState, useContext } from "react";
+import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { listenToTrades, updateTrade } from "../../utils/crud";
 import { AuthContext } from "../../context/auth";
-import { addTrade } from "../../utils/crud";
-import { formatDate, formatPrice } from "../../utils/format";
-import { showError, showSuccess } from "../../utils/toast";
-import CustomKeyboardScrollView from "../../components/UI/CustomKeyboardScrollView";
+import { GlobalColors } from "../../constants/colors";
+import { formatDateString, formatDollarAmountShorthand } from "../../utils/format";
+import CustomButton from "../../components/UI/CustomButton";
 import TradeForm from "../../components/Dashboard/TradeForm";
+import { showError, showSuccess } from "../../utils/toast";
 
-export default function DashboardForm() {
-    const authContext = useContext(AuthContext)
-    const [pnl, setPnL] = useState({ value: '', isFilled: true });
-    const [openTime, setOpenTime] = useState({ value: '', isFilled: true });
-    const [closeTime, setCloseTime] = useState({ value: '', isFilled: true });
-    const [assetName, setAssetName] = useState({ value: '', isFilled: true });
-    const [description, setDescription] = useState({ value: '', isFilled: true });
-    const [tradingSession, setTradingSession] = useState({ value: '', isFilled: true });
-    const [result, setResult] = useState({ value: '', isFilled: true });
+export default function DashboardTradeEdit({ route, navigation }) {
+    const { trade } = route.params;
+
+    const [pnl, setPnL] = useState({ value: trade.pnl.toString(), isFilled: true });
+    const [openTime, setOpenTime] = useState({ value: trade.openTime, isFilled: true });
+    const [closeTime, setCloseTime] = useState({ value: trade.closeTime, isFilled: true });
+    const [assetName, setAssetName] = useState({ value: trade.assetName, isFilled: true });
+    const [description, setDescription] = useState({ value: trade.description, isFilled: true });
+    const [tradingSession, setTradingSession] = useState({ value: trade.tradingSession, isFilled: true });
+    const [result, setResult] = useState({ value: trade.result, isFilled: true });
     const [error, setError] = useState(null)
 
     useEffect(() => {
@@ -86,24 +83,28 @@ export default function DashboardForm() {
     function submitTrade() {
         if (inputsAreValid()) {
             try {
-                addTrade(authContext.user, assetName.value, tradingSession.value, result.value, Number(pnl.value), openTime.value, closeTime.value, description.value);
+                const updatedData = {
+                    assetName: assetName.value, 
+                    tradingSession: tradingSession.value,
+                    result: result.value,
+                    pnl: Number(pnl.value),
+                    openTime: openTime.value,
+                    closeTime: closeTime.value,
+                    description: description.value
+                };
+
+                updateTrade(trade.id, updatedData);
                 setError(null); 
-                setPnL({ value: '', isFilled: true })
-                setOpenTime({ value: '', isFilled: true })
-                setCloseTime({ value: '', isFilled: true })
-                setDescription({ value: '', isFilled: true })
-                setAssetName({ value: '', isFilled: true })
-                setTradingSession({ value: '', isFilled: true })
-                setResult({ value: '', isFilled: true })
                 showSuccess({ main: 'Trade Submitted', sub: 'Check trades tab to see trades' })
+                navigation.navigate("MyTrades")
             } catch (error) {
                 console.log("Error submitting trade:", error);
                 setError({ main: 'Error', sub: 'An error occurred while submitting the trade' });
             }            
         }
     }
-    
+
     return (
-        <TradeForm type="new" assetName={assetName} setAssetName={setAssetName} tradingSession={tradingSession} setTradingSession={setTradingSession} result={result} setResult={setResult} pnl={pnl} setPnL={setPnL} openTime={openTime} setOpenTime={setOpenTime} closeTime={closeTime} setCloseTime={setCloseTime} description={description} setDescription={setDescription} onSubmit={submitTrade}/>
+        <TradeForm type="edit" assetName={assetName} setAssetName={setAssetName} tradingSession={tradingSession} setTradingSession={setTradingSession} result={result} setResult={setResult} pnl={pnl} setPnL={setPnL} openTime={openTime} setOpenTime={setOpenTime} closeTime={closeTime} setCloseTime={setCloseTime} description={description} setDescription={setDescription} onSubmit={submitTrade} onCancel={() => navigation.goBack()}/>
     );
 }

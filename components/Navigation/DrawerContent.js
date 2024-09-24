@@ -10,7 +10,6 @@ export default function DrawerContent(props) {
 
     function logout() {
         authContext.logout()
-        console.log("pressed")
     }
 
     return (

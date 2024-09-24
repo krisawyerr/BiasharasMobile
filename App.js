@@ -24,6 +24,8 @@ import { toastConfig } from './utils/toast';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Backtester from './screens/Backtest/Backtester';
 import BacktesterStats from './screens/Backtest/BacktesterStats';
+import DashboardSingleTrade from './screens/Dashboard/DashboardSingleTrade';
+import DashboardTradeEdit from './screens/Dashboard/DashboardTradeEdit';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -118,11 +120,22 @@ function SectionDrawers() {
 function DashboardLayout() {
   const dashboardScreens = [
     { name: 'Stats', component: DashboardStats, icon: 'stats-chart-sharp', IconComponent: Ionicons },
-    { name: 'Trades', component: DashboardTrades, icon: 'money-bill-transfer', IconComponent: FontAwesome6 },
+    { name: 'Trades', component: TradesStacker, icon: 'money-bill-transfer', IconComponent: FontAwesome6 },
     { name: 'Form', component: DashboardForm, icon: 'pluscircle', IconComponent: AntDesign },
   ];
 
   return createTabNavigator(dashboardScreens);
+}
+function TradesStacker() {
+  return (
+    <Stack.Navigator screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name='MyTrades' component={DashboardTrades} />
+      <Stack.Screen name='MyTrade' component={DashboardSingleTrade} />
+      <Stack.Screen name='EditMyTrade' component={DashboardTradeEdit} />
+    </Stack.Navigator>
+  )
 }
 function BacktestLayout() {
   const backtestScreens = [
