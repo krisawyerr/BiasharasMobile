@@ -19,6 +19,20 @@ export async function addTrade(user, assetName, tradingSession, result, pnl, ope
     }
 }
 
+export async function addTrade2(user, result, pnl, closeTime) {
+    try {
+        await addDoc(collection(db, 'trades'), { 
+            user: user,
+            result: result,
+            pnl: pnl,
+            closeTime: closeTime,
+            dateAdded: new Date()
+        });
+    } catch (error) {
+        console.error("Error adding trade: ", error);
+    }
+}
+
 export function listenToTrades(user, callback) {
     try {
         const q = query(collection(db, 'trades'), where('user', '==', user), orderBy('closeTime', 'desc'));

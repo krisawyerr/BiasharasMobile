@@ -6,6 +6,8 @@ export const Trading = {
     Result: [
         { label: 'Win', value: 'Win' },
         { label: 'Loss', value: 'Loss' },
+        { label: 'Deposit', value: 'Deposit' },
+        { label: 'Withdrawl', value: 'Withdrawl' },
     ],
     Sessions: [
         { label: 'London Session', value: 'London Session' },

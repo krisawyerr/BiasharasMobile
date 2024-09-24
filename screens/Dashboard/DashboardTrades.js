@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { listenToTrades } from "../../utils/crud";
 import { AuthContext } from "../../context/auth";
 import { GlobalColors } from "../../constants/colors";
@@ -38,10 +38,10 @@ export default function DashboardTrades({navigation}) {
                     <Pressable onPress={() => viewTradeDetails(tradeData.item)} key={tradeData.item.id} style={{backgroundColor: GlobalColors.colors.primary200, marginBottom: 10, padding: 20}}>
                         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: 'center',}}>
                             <View>
-                                <Text style={{fontSize: 20, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{tradeData.item.assetName}</Text>
+                                <Text style={{fontSize: 20, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{tradeData.item.assetName ? tradeData.item.assetName : tradeData.item.result}</Text>
                                 <Text style={{fontSize: 16, fontWeight: "500", color: GlobalColors.colors.primary600}}>{formatDateString(tradeData.item.closeTime)}</Text>
                             </View>
-                            <Text style={{fontSize: 20, fontWeight: "bold", color: tradeData.item.pnl < 0 ? "red" : "green"}}>{formatDollarAmountShorthand(tradeData.item.pnl)}</Text>
+                            <Text style={{fontSize: 20, fontWeight: "bold", color: !tradeData.item.assetName ? GlobalColors.colors.primary600 : tradeData.item.pnl < 0 ? "red" : "green"}}>{formatDollarAmountShorthand(tradeData.item.pnl)}</Text>
                         </View>
                     </Pressable>
                 )}

@@ -1,7 +1,5 @@
-import { useEffect, useState, useContext } from "react";
-import { Alert, Button, FlatList, Pressable, ScrollView, Text, View } from "react-native";
-import { deleteTrade, listenToTrades } from "../../utils/crud";
-import { AuthContext } from "../../context/auth";
+import { Alert, Text, View } from "react-native";
+import { deleteTrade } from "../../utils/crud";
 import { GlobalColors } from "../../constants/colors";
 import { formatDateString, formatDollarAmountShorthand } from "../../utils/format";
 import CustomButton from "../../components/UI/CustomButton";
@@ -43,17 +41,17 @@ export default function DashboardSingleTrade({ route, navigation }) {
         <View style={{backgroundColor: GlobalColors.colors.primary100, flex: 1, paddingVertical: 10, paddingHorizontal: 10}}>
             <View style={{flex: 1}}>
                 <View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 30}}>
-                    <Text style={{fontSize: 30, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{trade.assetName}</Text>
-                    <Text style={{fontSize: 30, fontWeight: "bold", color: trade.pnl < 0 ? "red" : "green"}}>{formatDollarAmountShorthand(trade.pnl)}</Text>
+                    <Text style={{fontSize: 30, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{trade.assetName ? trade.assetName : trade.result}</Text>
+                    <Text style={{fontSize: 30, fontWeight: "bold", color: !trade.assetName ? GlobalColors.colors.primary600 : trade.pnl < 0 ? "red" : "green"}}>{formatDollarAmountShorthand(trade.pnl)}</Text>
                 </View>
-                <View style={{marginBottom: 10}}>
+                {trade.assetName && <View style={{marginBottom: 10}}>
                     <Text style={{fontSize: 16, fontWeight: "bold", color: GlobalColors.colors.primary400}}>Session:</Text>
                     <Text style={{fontSize: 25, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{trade.tradingSession}</Text>
-                </View>
-                <View style={{marginBottom: 10}}>
+                </View>}
+                {trade.assetName && <View style={{marginBottom: 10}}>
                     <Text style={{fontSize: 16, fontWeight: "bold", color: GlobalColors.colors.primary400}}>Trade Start Date:</Text>
                     <Text style={{fontSize: 25, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{formatDateString(trade.openTime)}</Text>
-                </View>
+                </View>}
                 <View style={{marginBottom: 10}}>
                     <Text style={{fontSize: 16, fontWeight: "bold", color: GlobalColors.colors.primary400}}>Trade End Date:</Text>
                     <Text style={{fontSize: 25, fontWeight: "bold", color: GlobalColors.colors.primary600}}>{formatDateString(trade.closeTime)}</Text>

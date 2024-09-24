@@ -1,15 +1,7 @@
-import { GlobalColors } from "../../constants/colors";
 import { useContext, useEffect, useState } from "react";
-import CustomTextInput from "../../components/UI/CustomTextInput";
-import CustomPickerSelect from "../../components/UI/CustomPickerSelect";
-import { Trading } from "../../constants/trading";
-import CustomButton from "../../components/UI/CustomButton";
-import CustomTitle from "../../components/UI/CustomTitle";
 import { AuthContext } from "../../context/auth";
-import { addTrade } from "../../utils/crud";
-import { formatDate, formatPrice } from "../../utils/format";
+import { addTrade, addTrade2 } from "../../utils/crud";
 import { showError, showSuccess } from "../../utils/toast";
-import CustomKeyboardScrollView from "../../components/UI/CustomKeyboardScrollView";
 import TradeForm from "../../components/Dashboard/TradeForm";
 
 export default function DashboardForm() {
@@ -83,22 +75,84 @@ export default function DashboardForm() {
         return true
     }
 
+    function inputsAreValid2() {
+        const currentTime = new Date().getTime()
+
+        if (pnl.value.length === 0 || closeTime.value.length === 0 || result.value.length === 0) {
+            if (pnl.value.length === 0) setPnL({ value: '', isFilled: false });
+            if (closeTime.value.length === 0) setCloseTime({ value: '', isFilled: false });
+            if (result.value.length === 0) setResult({ value: '', isFilled: false });
+
+            setError({ main: 'Form Incomplete', sub: 'Please fill out entire form' });
+            return false
+        }
+
+        if (pnl.value.length < 1 || isNaN(Number(pnl.value))) {
+            setPnL({ value: '', isFilled: false });
+            setError({ main: 'PnL not a number', sub: 'Please enter a valid number' });
+            return false
+        }
+
+        if (isNaN(new Date(closeTime.value).getTime())) {
+            setCloseTime({ value: '', isFilled: false });
+
+            setError({ main: 'Date entered wrong', sub: 'Please enter a valid date (YYYY-MM-DD)' });
+            return false
+        }
+
+        if (new Date(closeTime.value).getTime() > currentTime) {
+            setCloseTime({ value: '', isFilled: false });     
+
+            setError({ main: 'Invalid dates', sub: 'Date cannot be in future.' });
+            return false
+        }
+
+        if ((result.value === "Deposit" && Number(pnl.value) < 0) || (result.value === "Withdrawl" && Number(pnl.value) >= 0)) {
+            if (result.value === "Deposit" && Number(pnl.value) < 0) setError({ main: 'Result doent match amount', sub: 'Amount should be positive' }); 
+            if (result.value === "Loss" && Number(pnl.value) >= 0) setError({ main: 'Result doent match amount', sub: 'Amount should be negative' }); 
+            
+            return false
+        }
+
+        return true
+    }
+
     function submitTrade() {
-        if (inputsAreValid()) {
-            try {
-                addTrade(authContext.user, assetName.value, tradingSession.value, result.value, Number(pnl.value), openTime.value, closeTime.value, description.value);
-                setError(null); 
-                setPnL({ value: '', isFilled: true })
-                setOpenTime({ value: '', isFilled: true })
-                setCloseTime({ value: '', isFilled: true })
-                setDescription({ value: '', isFilled: true })
-                setAssetName({ value: '', isFilled: true })
-                setTradingSession({ value: '', isFilled: true })
-                setResult({ value: '', isFilled: true })
-                showSuccess({ main: 'Trade Submitted', sub: 'Check trades tab to see trades' })
-            } catch (error) {
-                console.log("Error submitting trade:", error);
-                setError({ main: 'Error', sub: 'An error occurred while submitting the trade' });
+        if (result.value === "Win" || result.value === "Loss") {
+            if (inputsAreValid()) {
+                try {
+                    addTrade(authContext.user, assetName.value, tradingSession.value, result.value, Number(pnl.value), openTime.value, closeTime.value, description.value);
+                    setError(null); 
+                    setPnL({ value: '', isFilled: true })
+                    setOpenTime({ value: '', isFilled: true })
+                    setCloseTime({ value: '', isFilled: true })
+                    setDescription({ value: '', isFilled: true })
+                    setAssetName({ value: '', isFilled: true })
+                    setTradingSession({ value: '', isFilled: true })
+                    setResult({ value: '', isFilled: true })
+                    showSuccess({ main: 'Trade Submitted', sub: 'Check trades tab to see trades' })
+                } catch (error) {
+                    console.log("Error submitting trade:", error);
+                    setError({ main: 'Error', sub: 'An error occurred while submitting the trade' });
+                }            
+            }            
+        } else {
+            if (inputsAreValid2()) {
+                try {
+                    addTrade2(authContext.user, result.value, Number(pnl.value), closeTime.value);
+                    setError(null); 
+                    setPnL({ value: '', isFilled: true })
+                    setOpenTime({ value: '', isFilled: true })
+                    setCloseTime({ value: '', isFilled: true })
+                    setDescription({ value: '', isFilled: true })
+                    setAssetName({ value: '', isFilled: true })
+                    setTradingSession({ value: '', isFilled: true })
+                    setResult({ value: '', isFilled: true })
+                    showSuccess({ main: 'Trade Submitted', sub: 'Check trades tab to see trades' })
+                } catch (error) {
+                    console.log("Error submitting trade:", error);
+                    setError({ main: 'Error', sub: 'An error occurred while submitting the trade' });
+                }            
             }            
         }
     }
